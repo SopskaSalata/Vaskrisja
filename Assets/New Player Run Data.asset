@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c429068e93e918b40808d31b6ba0c373, type: 3}
+  m_Name: New Player Run Data
+  m_EditorClassIdentifier: 
+  runMaxSpeed: 14.14
+  runAcceleration: 0.01
+  runAccelAmount: 0.03536068
+  runDecceleration: 0.01
+  runDeccelAmount: 0.03536068
+  accelInAir: 1
+  deccelInAir: 1
+  doConserveMomentum: 1
