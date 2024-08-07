@@ -33,7 +33,6 @@ public class Player_Movement : MonoBehaviour
     public int atackDamage = 40;
     public float atackRate = 2f;
     float nextAtackTime = 0f;
-    
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
@@ -42,26 +41,23 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
 
-
     private void Update()
     {
         anim = GetComponent<Animator>();
 
-       if(horizontal != 0f && speed < maxSpeed)
+        if (horizontal != 0f && speed < maxSpeed)
         {
             speed += Time.deltaTime * accelerationspeed;
-
         }
 
-       if(horizontal == 0f)
+        if (horizontal == 0f)
         {
             speed = 0f;
         }
-       
-            Atack();
-        
-        
-            if (isDashing)
+
+        Atack();
+
+        if (isDashing)
         {
             return;
         }
@@ -72,7 +68,7 @@ public class Player_Movement : MonoBehaviour
         {
             anim.SetBool("IsRunning", true);
         }
-        else 
+        else
         {
             anim.SetBool("IsRunning", false);
         }
@@ -90,14 +86,12 @@ public class Player_Movement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             StartCoroutine(Dash());
-            anim.SetBool("IsDashing",true);
+            anim.SetBool("IsDashing", true);
         }
-
         else
         {
             anim.SetBool("IsDashing", false);
         }
-      
 
         WallJump();
 
@@ -106,24 +100,18 @@ public class Player_Movement : MonoBehaviour
             Flip();
         }
         Atack();
-        
     }
 
     private void FixedUpdate()
     {
-
         WallSlider();
-        
 
         if (isDashing)
         {
             return;
-        } 
+        }
 
-       
-            rb.velocity = new Vector3(horizontal * speed * Time.deltaTime, rb.velocity.y, 0f);
-      
-        
+        rb.velocity = new Vector3(horizontal * speed * Time.deltaTime, rb.velocity.y, 0f);
     }
 
     private bool IsGrounded()
@@ -138,10 +126,9 @@ public class Player_Movement : MonoBehaviour
 
     private void WallSlider()
     {
-        if (isWalled() && !IsGrounded() && rb.velocity.y <0)
+        if (isWalled() && !IsGrounded() && rb.velocity.y < 0)
         {
             isWallSliding = true;
-            
         }
         else
         {
@@ -169,7 +156,7 @@ public class Player_Movement : MonoBehaviour
             wallJumpingCounter -= Time.deltaTime;
         }
 
-        if (Input.GetButtonDown("Jump")&& wallJumpingCounter > 0f)
+        if (Input.GetButtonDown("Jump") && wallJumpingCounter > 0f)
         {
             isWallJumping = true;
             rb.velocity = new Vector2(wallJupingDirection * wallJumpingPower.x, wallJumpingPower.y);
@@ -190,6 +177,7 @@ public class Player_Movement : MonoBehaviour
     {
         isWallJumping = false;
     }
+
     private void Flip()
     {
         if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
@@ -207,21 +195,37 @@ public class Player_Movement : MonoBehaviour
         isDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
-        rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+
+        // Get the dash direction based on input
+        Vector2 dashDirection = new Vector2(horizontal, 0f); // Horizontal input
+        if (Input.GetKey(KeyCode.W)) // Check if the player is trying to dash upward
+        {
+            dashDirection.y = 1f; // Set upward direction
+        }
+
+        // Normalize the direction vector to ensure consistent speed
+        rb.velocity = dashDirection.normalized * dashingPower;
         tr.emitting = true;
-        yield return new WaitForSeconds(dashingTime);
+
+        // Wait until the dash animation is finished
+        float dashAnimationDuration = anim.runtimeAnimatorController.animationClips[0].length; // Assuming the dash animation is the first clip
+        yield return new WaitForSeconds(dashAnimationDuration);
+
+        // Stop the player after dashing
+        rb.velocity = Vector2.zero;
+        speed = 0f; // Set speed to zero after the dash
+
         tr.emitting = false;
         rb.gravityScale = originalGravity;
         isDashing = false;
+
         yield return new WaitForSeconds(dashingCooldown);
         canDash = true;
-
-
     }
+
 
     private void Atack()
     {
-
         if (Time.time >= nextAtackTime)
         {
             if (Input.GetKeyDown(KeyCode.K))
@@ -242,7 +246,7 @@ public class Player_Movement : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if(atackPoint == null)
+        if (atackPoint == null)
         {
             return;
         }
