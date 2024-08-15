@@ -41,6 +41,10 @@ public class Player_Movement : MonoBehaviour
     [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask wallLayer;
 
+    // New public variable for falling gravity multiplier
+    [Header("Falling Gravity Settings")]
+    public float fallingGravityMultiplier = 2f; // Multiplier for gravity while falling
+
     private void Update()
     {
         anim = GetComponent<Animator>();
@@ -99,7 +103,8 @@ public class Player_Movement : MonoBehaviour
         {
             Flip();
         }
-        Atack();
+
+        ApplyFallingGravity(); // Apply increased gravity while falling
     }
 
     private void FixedUpdate()
@@ -223,6 +228,14 @@ public class Player_Movement : MonoBehaviour
         canDash = true;
     }
 
+    private void ApplyFallingGravity()
+    {
+        // Increase gravity when falling
+        if (rb.velocity.y < 0) // Check if the player is falling
+        {
+            rb.AddForce(Physics2D.gravity * (fallingGravityMultiplier - 1) * rb.mass);
+        }
+    }
 
     private void Atack()
     {
@@ -251,5 +264,11 @@ public class Player_Movement : MonoBehaviour
             return;
         }
         Gizmos.DrawWireSphere(atackPoint.position, atackRange);
+    }
+
+    // New method to refresh the dash
+    public void RefreshDash()
+    {
+        canDash = true; // Refresh the dash cooldown
     }
 }
